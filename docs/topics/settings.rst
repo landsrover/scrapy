@@ -468,7 +468,6 @@ Default::
         'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 600,
         'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 700,
         'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 750,
-        'scrapy.downloadermiddlewares.chunked.ChunkedTransferMiddleware': 830,
         'scrapy.downloadermiddlewares.stats.DownloaderStats': 850,
         'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 900,
     }
@@ -504,8 +503,7 @@ supported.  Example::
 
 This setting is also affected by the :setting:`RANDOMIZE_DOWNLOAD_DELAY`
 setting (which is enabled by default). By default, Scrapy doesn't wait a fixed
-amount of time between requests, but uses a random interval between 0.5 and 1.5
-* :setting:`DOWNLOAD_DELAY`.
+amount of time between requests, but uses a random interval between 0.5 * :setting:`DOWNLOAD_DELAY` and 1.5 * :setting:`DOWNLOAD_DELAY`.
 
 When :setting:`CONCURRENT_REQUESTS_PER_IP` is non-zero, delays are enforced
 per ip address instead of per domain.
@@ -790,6 +788,16 @@ If ``True``, all standard output (and error) of your process will be redirected
 to the log. For example if you ``print 'hello'`` it will appear in the Scrapy
 log.
 
+.. setting:: LOG_SHORT_NAMES
+
+LOG_SHORT_NAMES
+---------------
+
+Default: ``False``
+
+If ``True``, the logs will just contain the root path. If it is set to ``False``
+then it displays the component responsible for the log output
+
 .. setting:: MEMDEBUG_ENABLED
 
 MEMDEBUG_ENABLED
@@ -925,8 +933,7 @@ RANDOMIZE_DOWNLOAD_DELAY
 
 Default: ``True``
 
-If enabled, Scrapy will wait a random amount of time (between 0.5 and 1.5
-* :setting:`DOWNLOAD_DELAY`) while fetching requests from the same
+If enabled, Scrapy will wait a random amount of time (between 0.5 * :setting:`DOWNLOAD_DELAY` and 1.5 * :setting:`DOWNLOAD_DELAY`) while fetching requests from the same
 website.
 
 This randomization decreases the chance of the crawler being detected (and
@@ -1030,10 +1037,39 @@ Stats counter (``scheduler/unserializable``) tracks the number of times this hap
 
 Example entry in logs::
 
-    1956-01-31 00:00:00+0800 [scrapy] ERROR: Unable to serialize request:
+    1956-01-31 00:00:00+0800 [scrapy.core.scheduler] ERROR: Unable to serialize request:
     <GET http://example.com> - reason: cannot serialize <Request at 0x9a7c7ec>
     (type Request)> - no more unserializable requests will be logged
     (see 'scheduler/unserializable' stats counter)
+
+
+.. setting:: SCHEDULER_DISK_QUEUE
+
+SCHEDULER_DISK_QUEUE
+--------------------
+
+Default: ``'scrapy.squeues.PickleLifoDiskQueue'``
+
+Type of disk queue that will be used by scheduler. Other available types are
+``scrapy.squeues.PickleFifoDiskQueue``, ``scrapy.squeues.MarshalFifoDiskQueue``,
+``scrapy.squeues.MarshalLifoDiskQueue``.
+
+.. setting:: SCHEDULER_MEMORY_QUEUE
+
+SCHEDULER_MEMORY_QUEUE
+----------------------
+Default: ``'scrapy.squeues.LifoMemoryQueue'``
+
+Type of in-memory queue used by scheduler. Other available type is:
+``scrapy.squeues.FifoMemoryQueue``.
+
+.. setting:: SCHEDULER_PRIORITY_QUEUE
+
+SCHEDULER_PRIORITY_QUEUE
+------------------------
+Default: ``'queuelib.PriorityQueue'``
+
+Type of priority queue used by scheduler.
 
 .. setting:: SPIDER_CONTRACTS
 
